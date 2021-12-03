@@ -5,7 +5,6 @@ with open("day2.txt") as f:
 
 horizontal = 0
 depth = 0
-depth = 0
 aim = 0
 
 for line in input[:-1]:
