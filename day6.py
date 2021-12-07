@@ -22,18 +22,19 @@ for i in range(80):
     state = day(state)
 print(len(state))
 
-state = {i: 0 for i in range(7)}
-stack = []
-for fish in parse(test):
+state = [0] * 7
+for fish in parse(text):
     state[fish] += 1
 
 day = 0
-while (day < 10):
-    if state[day % 7] != 0:
-        stack.append(0)
-        stack.append(0)
-        stack.append(state[day % 7])
-        print("zero at day", day)
+planner = [0, 0, 0]
+while (day < 256 + 1):
+    today = day % 7
+    state[(day + 6) % 7] += planner[0]
+    planner[0] = planner[1]
+    planner[1] = planner[2]
+    planner[2] = 0
+    if state[today] != 0:
+        planner[-1] += state[today]
     day += 1
-
-print(state)
+print(sum(state) + sum(planner[:-1]))  # ignore the last day as these are planned for tomorrow
