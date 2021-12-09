@@ -1,4 +1,3 @@
-from pprint import pprint as print
 test = """be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb | fdgacbe cefdb cefbgd gcbe
 edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec | fcgedb cgb dgebacf gc
 fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef | cg cg fdcagb cbg
@@ -14,36 +13,56 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
 def parser(input):
     return [{"signals": sorted(line.split(" | ")[0].split(" "), key=len),
              "digits": line.split(" | ")[1].split(" ")}
-            for line in input.split("\n")]
+            for line in input.split("\n")
+            if len(line) > 0]
 
+def intersection(*args):
+    result = set(args[0])
+    for arg in args:
+        result = result & set(arg)
+    return result
 
 def convert(signals):
+    two_segments = list(filter(lambda x: len(x) == 2, signals))  # 1
+    three_segments = list(filter(lambda x: len(x) == 3, signals))  # 7
+    four_segments = list(filter(lambda x: len(x) == 4, signals))  # 4
+    five_segments = list(filter(lambda x: len(x) == 5, signals))  # 2, 3, 5
+    six_segments  = list(filter(lambda x: len(x) == 6, signals))  # 0, 6, 9
+    seven_segments  = list(filter(lambda x: len(x) == 7, signals))  # 8
+
     segments = {}
     taken = []
-    segments["c"] = list(filter(lambda x: len(x) == 2, signals))[0]
+    segments["c"] = two_segments[0]
     segments["f"] = segments["c"]
     taken.extend(segments["f"])
-    segments["a"] = [char for char in list(filter(lambda x: len(x) == 3, signals))[0]
+
+    segments["a"] = [char for char in three_segments[0]
                      if char not in taken][0]
     taken.append(segments["a"])
-    five_segments = list(filter(lambda x: len(x) == 5, signals))
-    segments["b"] = list(char for char in list(filter(lambda x: len(x) == 4, signals))[0]
+    segments["b"] = list(char for char in four_segments[0]
                          if char not in taken)
-    # TODO
-    segments["d"] = list(char for char in segments["b"]
-                         if char in filter(
-                                 # Number 3
-                                 lambda signal: all(char in signal
-                                                    for char in segments["c"]),
-                                 five_segments))
-    # taken.append(segments["d"])
+    segments["d"] = next(char for char in segments["b"]
+                         if char in set(four_segments[0]) & intersection(*five_segments))
+    taken.append(segments["d"])
     segments["b"] = next(char for char in segments["b"]
                          if char not in segments["d"])
     taken.extend(segments["b"])
-    segments["g"] = next((char for char in "abcdefg"
-                          if char not in taken and
-                          all(char in signal for signal in five_segments)))
+    segments["c"] = next(char for char in segments["c"]
+                         if all(char in segment for segment in
+                                # 2, 3
+                                filter(lambda x: segments["b"]
+                                       not in x, five_segments)))
+    segments["f"] = next(char for char in segments["f"]
+                         if char != segments["c"])
+
+    segments["g"] = next(char for char in "abcdefg"
+                         if char not in taken and
+                         all(char in signal for signal in five_segments))
     taken.append(segments["g"])
+    segments["e"] = next(char for char in "abcdefg"
+                         if char not in taken)
+    taken.append(segments["e"])
+    assert len(taken) == 7, sorted(segments.keys())
     return segments
 
 
@@ -77,5 +96,22 @@ def encode(signal, segments={key: key for key in "abcdefg"}):
 assert encode("abcefg") == 0
 assert encode("cf") == 1
 
-parsed_text = parser(test)
-print([convert(text["signals"]) for text in parsed_text])
+with open("day8.txt") as f:
+    input = f.read()
+
+parsed_text = parser(input)
+converted_segments = [convert(text["signals"]) for text in parsed_text]
+result = [encode(signal, segments) for segments, text
+          in zip(converted_segments, parsed_text)
+          for signal in text["digits"]]
+
+part1 = sum(1 for number in result if number in [1,4,7,8])
+print(part1)
+
+result = [int("".join([str(encode(signal, segments))
+                       for signal in text["digits"]]))
+          for segments, text
+          in zip(converted_segments, parsed_text)
+          ]
+part2 = sum(number for number in result)
+print(part2)
