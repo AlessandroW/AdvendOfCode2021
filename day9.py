@@ -77,4 +77,26 @@ def part2(input):
     clusters = sorted(clusters)
     print(len(clusters[-1]) * len(clusters[-2]) * len(clusters[-3]))
 
-part2(input)
+# part2(input)
+from scipy.ndimage import label
+
+# Taken from https://www.reddit.com/r/adventofcode/comments/rca6vp/comment/hnyzk33/
+# I implemented the same function twice but somehow it only works on the example. Idk. Let's move on
+
+array = parse(input)
+
+def part2(array):
+    size_mem = []
+    mask = array.copy()
+    mask = (mask < 9).astype(int)
+    print(mask)
+
+    labs, n_labs = label(mask)
+    basins = []
+
+    for i in range(n_labs):
+        basins.append(array[np.where(labs == i+1)])
+    basins.sort(key=len, reverse=True)
+    return(np.prod(list(map(len, basins[:3]))))
+
+print(part2(array))
