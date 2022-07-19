@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main() {
 
     auto day = Day1();
     day.PrintSolution1();

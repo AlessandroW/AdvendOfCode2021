@@ -3,7 +3,7 @@
 #include <iostream>
 
 Day1::Day1(){
-    auto Input = Utilities::ReadAllLinesInFile("../day1.txt");
+    auto Input = Utilities::ReadAllLinesInFile("../data/day1.txt");
     for (const auto& line : Input) {
         Puzzle.push_back(std::stoi(line));
     }
