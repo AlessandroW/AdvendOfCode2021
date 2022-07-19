@@ -2,12 +2,12 @@
 #include <fstream>
 #include <string>
 
-std::vector<std::string> Utilities::ReadAllLinesInFile(const std::filesystem::path& Path){
-    std::vector<std::string> AllLines;
-    std::ifstream FileStream{Path};
-    std::string CurrentLine;
-    while (std::getline(FileStream, CurrentLine)) {
-        AllLines.push_back(CurrentLine);
+std::vector<std::string> Utilities::read_all_lines_in_file(const std::filesystem::path& path){
+    std::vector<std::string> all_lines;
+    std::ifstream FileStream{path};
+    std::string current_line;
+    while (std::getline(FileStream, current_line)) {
+        all_lines.emplace_back(std::move(current_line));
     }
-    return AllLines;
+    return all_lines;
 }

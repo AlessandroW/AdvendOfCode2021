@@ -6,7 +6,7 @@ using namespace std;
 int main() {
 
     auto day = Day1();
-    day.PrintSolution1();
-    day.PrintSolution2();
+    day.print_solution_1();
+    day.print_solution_2();
     return 0;
 }

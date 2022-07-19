@@ -1,16 +1,13 @@
-#ifndef DAY1_H_
-#define DAY1_H_
-
-#include "utils.h"
+#pragma once
 #include <string>
 #include <vector>
+#include "utils.h"
 
 class Day1 {
     public:
         Day1();
-        void PrintSolution1();
-        void PrintSolution2();
+        void print_solution_1();
+        void print_solution_2();
     private:
-        std::vector<int> Puzzle;
+        std::vector<int> puzzle;
 };
-#endif // DAY1_H_
